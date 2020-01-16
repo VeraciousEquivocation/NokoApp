@@ -1,0 +1,38 @@
+// DEFAULT SCSS VALUES
+
+$percentLighten: 15%;
+$percentDarken: 15%;
+
+$darkblue: #0A2756;
+$blue: #0080FF;
+$blue2: #0081C6;
+$blue3: #77B0DD;
+$green: #87CB9C;
+$red: #F47F64;
+$orange: #FFB32C;
+$grey: #A6A6A6;
+$lightgrey: #F2F2F2;
+$white: #fff;
+$black: #000;
+
+$darkblue_light: lighten($darkblue, $percentLighten);
+$blue_light: lighten($blue, $percentLighten);
+$blue2_light: lighten($blue2, $percentLighten);
+$blue3_light: lighten($blue3, $percentLighten);
+$green_light: lighten($green, $percentLighten);
+$red_light: lighten($red, $percentLighten);
+$orange_light: lighten($orange, $percentLighten);
+$grey_light: lighten($grey, $percentLighten);
+$lightgrey_light: lighten($lightgrey, $percentLighten);
+
+$blue3_lighter: lighten($blue3, ($percentLighten*2));
+
+$darkblue_dark: darken($darkblue, $percentDarken);
+$blue_dark: darken($blue, $percentDarken);
+$blue2_dark: darken($blue2, $percentDarken);
+$blue3_dark: darken($blue3, $percentDarken);
+$green_dark: darken($green, $percentDarken);
+$red_dark: darken($red, $percentDarken);
+$orange_dark: darken($orange, $percentDarken);
+$grey_dark: darken($grey, $percentDarken);
+$lightgrey_dark: darken($lightgrey, $percentDarken);

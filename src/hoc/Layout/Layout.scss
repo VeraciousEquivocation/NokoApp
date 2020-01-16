@@ -1,0 +1,122 @@
+$drawerWidth: 240px;
+
+// .Content {
+//     position: 'relative';
+//     display: 'flex';
+//     width: '100%';
+//     height: '100%';
+// }
+.Container__Root {
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    overflow: hidden;
+}
+.Container__AppFrame {
+  position: relative;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  flex-direction: column;
+}
+.Container__AppBar {
+  flex-shrink: 0;
+  display: inline-flex;
+  z-index: 2;
+  position: relative!important;
+  transition: width 195ms cubic-bezier(0.4, 0, 0.6, 1) 0ms,margin 195ms cubic-bezier(0.4, 0, 0.6, 1) 0ms;
+}
+.Container__AppBar__Toolbar_Typography {
+    padding-left: 64px;
+    margin-right: 35px!important;
+}
+.cImg {
+  border-radius: 50%;
+  margin-left: 20px;
+  padding: 10px 0;
+}
+.bubble 
+{
+position: relative;
+color: black!important;
+width: 200px;
+height: 50px;
+padding: 3px;
+background: white;
+text-align: center;
+margin-top:auto;
+-webkit-border-radius: 8px;
+-moz-border-radius: 8px;
+border-radius: 8px;
+overflow: visible!important;
+line-height: 45px!important;
+margin-left: 48px!important;
+}
+.bubble:after 
+{
+content: '';
+position: absolute;
+border-style: solid;
+border-width: 11px 39px 11px 0;
+border-color: transparent white;
+display: block;
+width: 0;
+z-index: 1;
+left: -39px;
+top: 28px;
+}
+.Container__ExitButton {
+  margin-left: auto!important;
+  margin-right: 36px!important;
+}
+.Container__ExitButton_NavLink {
+  text-decoration: none;
+  color: #a6a6a6!important;
+  display: inherit;
+}
+.Container__ExitButton_Typography {
+  color: #a6a6a6!important;
+  margin-right: 4px!important;
+}
+.Container__MenuButton {
+  width: 60px!important;
+}
+.Container__Hide {
+  display: none;
+}
+.Container__DrawerPaper {
+  position: relative!important;
+  height: 100%;
+  margin-top: 112px;
+  width: $drawerWidth;
+  transition: width 225ms cubic-bezier(0.4, 0, 0.6, 1) 0ms;
+}
+.Container__DrawerPaperClose {
+  width: 60px;
+  overflow-x: hidden;
+  transition: width 195ms cubic-bezier(0.4, 0, 0.6, 1) 0ms;
+}
+.Container__DrawerInner {
+  // Make the items inside not wrap when transitioning:
+  width: $drawerWidth;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+.Container__DrawerInner ul {
+  flex: 0 0 auto;
+}
+.Container__DrawerInner ul:last-child {
+  margin-top: auto;
+  bottom: 116px;
+}
+
+.Container__Content {
+  width: 100%;
+  flex-grow: 1;
+  background-color: #dcf2ab;
+  // padding: 24px;
+  // height: calc(100% - 112px);
+  // margin-top: 112px;
+  overflow-y: scroll;
+}

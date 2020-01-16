@@ -1,0 +1,47 @@
+
+.freckleForm {
+    position: relative;
+    justify-content: center;
+    background-color: white;
+    // margin-top: 20px!important;
+    height: 600px;
+    max-width: 1200px;
+    margin: auto auto;
+  }
+  .actionBar {
+    min-height: 32px!important;
+    width: 100%;
+    left: auto;
+    right: 0;
+    color:#A6A6A6;
+    background-color: #3cc5de;
+    justify-content: center;
+  }
+  .actionBarWhite > input, .actionBarWhite {
+      color:white!important;
+  }
+  .actionBarInput::before, .actionBarInput::after {
+      border-color: white!important;
+  }
+  .rowBtn {
+      color: #e42e68!important;
+  }
+  .addBtnContainer {
+    // margin-left: auto!important;
+    display:flex;
+    justify-content: center;
+    margin-top: 20px;
+    border-top: 2px solid #f0f0f0;
+  }
+  .colorDisabled {
+    color:grey!important;
+    opacity:0.5;
+  }
+  .snackError > div {
+      color:white!important;
+      background-color: #f44336!important;
+      font-size: 16px;
+  }
+  .snackError > div span {
+      margin-left:12px;
+  }

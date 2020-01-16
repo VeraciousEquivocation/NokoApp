@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+      <script>
+          window.muiTheme = {
+            custom: {
+                leftDrawerPaper: {
+                    backgroundColor: "#77B0DD",
+                    color: "#FFF"
+                },
+                leftDrawerListIcon: {
+                    color: "#FFF"
+                },
+                leftDrawerListText: {
+                    color: "#FFF"
+                },
+                ClientsPage: {
+                    clientsPaper: {
+                        borderColor: '#0A2756',
+                        boxShadow: 'none',
+                        border: '1px solid'
+                    },
+                    searchField:{},
+                    label:{
+                        color: '#0A2756'
+                    },
+                    icons:{
+                        solid:{
+                            color: '#FFB32C',
+                            width: '18px'
+                        },
+                        hollow:{
+                            color: '#0A2756',
+                            width: '18px'
+                        },
+                    },
+                }
+            },
+            // overrides: {
+                // MuiDrawer: {
+                //     // Name of the styleSheet
+
+                //     backgroundColor: "#77B0DD",
+                //     root: {
+                //       // Name of the rule
+                //       backgroundColor: "#77B0DD" 
+                //     },
+                // },
+                // MuiPaper: {
+                //     // Name of the styleSheet
+                //     root: {
+                //       // Name of the rule
+                //       backgroundColor: "#77B0DD",
+                //       color: "#FFF"
+                //     },
+                // },
+                // MuiListItemIcon: {
+                //     root: {
+                //         color: "#FFF",
+                //     }
+                // },
+                // MuiListItemText: {
+                //     primary: {
+                //         color: "#FFF",
+                //     }
+                // }
+                
+            // },
+			palette: {
+  			    primary: { main: '#0A2756', contrastText: "#fff" },
+                secondary: { main: '#77B0DD', contrastText: "#fff" },
+                white:'#fff',
+                black:'#000',
+                grey: { dark: '#A6A6A6', light: '#F2F2F2' },
+                blue: {dark:'#0A2756', main:'#0080FF',blue2:'#0081C6',blue3:'#77B0DD'},
+                green:{main:'#87CB9C'},
+                red:{main:'#F47F64'},
+                orange:{main:'#FFB32C'},
+                error: { main: '#F47F64', contrastText: "#fff" },
+                removeBoxShadow: {boxShadow: "none"},
+  			    // Used by `getContrastText()` to maximize the contrast between the background and
+  			    // the text.
+  			    contrastThreshold: 3,
+  			    // Used to shift a color's luminance by approximately
+  			    // two indexes within its tonal palette.
+  			    // E.g., shift from Red 500 to Red 300 or Red 700.
+  			    tonalOffset: 0.2,
+  			},
+			//   typography: {
+ 			// 	fontFamily: "'Roboto', 'Helvetica', 'Arial', sans-serif",
+ 			// 	fontSize: 14,
+ 			// 	fontWeightLight: 300,
+ 			// 	fontWeightRegular: 400,
+ 			// 	fontWeightMedium: 500,
+			//   },
+			};
+     </script>
+     
+    <meta charset="utf-8" />
+    <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <!--
+      manifest.json provides metadata used when your web app is installed on a
+      user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
+    -->
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    <!--
+      Notice the use of %PUBLIC_URL% in the tags above.
+      It will be replaced with the URL of the `public` folder during the build.
+      Only files inside the `public` folder can be referenced from the HTML.
+
+      Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
+      work correctly both with client-side routing and a non-root public URL.
+      Learn how to configure a non-root public URL by running `npm run build`.
+    -->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700" rel="stylesheet">
+
+    <title>NOKO TIME UPDATER</title>
+  </head>
+  <body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root"></div>
+    <!--
+      This HTML file is a template.
+      If you open it directly in the browser, you will see an empty page.
+
+      You can add webfonts, meta tags, or analytics to this file.
+      The build step will place the bundled scripts into the <body> tag.
+
+      To begin the development, run `npm start` or `yarn start`.
+      To create a production bundle, use `npm run build` or `yarn build`.
+    -->
+  </body>
+</html>
