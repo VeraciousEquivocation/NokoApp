@@ -208,12 +208,16 @@ class TimeRow extends Component {
       				  	  <MenuItem value="" disabled>
 							  Project ID
       				  	  </MenuItem>
-							{
+							{/* {
 								this.props.projectList.length > 0
 								?	this.props.projectList.map(obj => <MenuItem key={obj.id} value={obj.id}>{obj.name}</MenuItem>)
 								: null
 
-							}
+							} */}
+							<MenuItem key={123} value={123}>{'Some Project'}</MenuItem>
+							<MenuItem key={1234} value={777}>{'Another One'}</MenuItem>
+							<MenuItem key={1235} value={1818}>{'And a Third'}</MenuItem>
+							<MenuItem key={1236} value={1819}>{'Potato Chips'}</MenuItem>
       				  	</Select>
 						<FormHelperText className={this.state.project_idError ? classes.errColor : null}>{loadingProjects ? <div><CircularProgress size={24} className={classes.buttonProgress} />Project ID</div> : "Project ID"}</FormHelperText>
       				</FormControl>

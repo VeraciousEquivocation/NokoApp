@@ -75,7 +75,8 @@ class FreckleForm extends Component {
 		projectList:[],
 		timeoutArray:[],
         posting: false,
-        openSnack: false
+        openSnack: false,
+        token:''
     }
     componentDidMount() {
       
@@ -130,6 +131,7 @@ class FreckleForm extends Component {
 		this.setState(oldState => {return{posting:!oldState.posting}});
 	};
     handleClickAll = () => {
+    if(this.childrenClicks.length <= 0) return;
 		// call each TimeRow instance's handleUpdateTime Method
 		this.setState({posting:true});
         this.childrenClicks.forEach((func,indx) => {

@@ -14,19 +14,10 @@ class Layout extends Component {
   	state = {
   	};
 
-  	componentWillUpdate() {
-        // console.log('[LAYOUT WILL UP]');
-	}
 	componentDidUpdate(prevProps) {
     
 	}
   	componentDidMount() {
-  	}
-	componentWillMount() {
-		// console.log('WILL MOJUNT');
-	}
-  	componentWillUnmount() {
-		// console.log('UNMOUNTING');
   	}
 
     render () {
