@@ -30,7 +30,7 @@ class Layout extends Component {
                     <AppBar className="Container__AppBar">
                       <Toolbar disableGutters={true} >
 						<img className='cImg' alt='img' src='https://ca.slack-edge.com/T4CLERADV-U4C2PQQBF-2ac7bd3e51e2-48' />
-						<Typography className="bubble Container__AppBar__Toolbar_Typography" variant="title" color="inherit" noWrap>
+						<Typography className="bubble Container__AppBar__Toolbar_Typography" variant="h5" color="inherit" noWrap>
                           It's Noko Time!
                         </Typography>
                       </Toolbar>

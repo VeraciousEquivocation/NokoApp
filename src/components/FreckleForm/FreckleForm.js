@@ -10,7 +10,10 @@ import Button from '@material-ui/core/Button';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import TextField from '@material-ui/core/TextField';
 import Snackbar from '@material-ui/core/Snackbar';
+import ButtonGroup from '@material-ui/core/ButtonGroup';
 import './FreckleForm.scss';
+import Zoom from '@material-ui/core/Zoom';
+import ViewEntries from './ViewEntries';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlusCircle } from '@fortawesome/free-solid-svg-icons';
@@ -18,6 +21,14 @@ import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 import { faArrowCircleUp } from '@fortawesome/free-solid-svg-icons';
 
 const styles = theme => ({
+  btnGrpFix: {
+      height:'1px'
+  },
+  btnGroup: {
+      margin:16,
+      display: 'flex',
+      justifyContent: 'center'
+  },
   container: {
     display: 'flex',
     flexWrap: 'wrap',
@@ -76,7 +87,8 @@ class FreckleForm extends Component {
 		timeoutArray:[],
         posting: false,
         openSnack: false,
-        token:''
+        token:'',
+        page: 'create'
     }
     componentDidMount() {
       
@@ -122,6 +134,10 @@ class FreckleForm extends Component {
           [name+'Error']: false
         });
     };
+    handlePageChange = (page) => {
+        if(page === this.state.page) return;
+        this.setState({page});
+    }
     handleAddRow = () => {
         if(this.state.entryRowCount < 6)
             this.setState((state) => {return {entryRowCount:(state.entryRowCount)+=1}});
@@ -189,47 +205,84 @@ class FreckleForm extends Component {
                     onClose={this.toggleSnack}
                     message={<div><FontAwesomeIcon icon={faExclamationTriangle} /><span className={''}>ERROR: Could not get Project IDs, Check Token</span></div>}
                 />
-            <Toolbar className={"actionBar"} disableGutters={true}>
-
-                <IconButton disabled={posting} size="small" className={classNames('actionBarWhite',posting&&'colorDisabled')} onClick={this.handleClickAll}>
-                    <FontAwesomeIcon icon={faArrowCircleUp} />
-					<span style={{marginLeft:'6px'}}>LOG ALL</span>
-                </IconButton>
-                {/* <IconButton disabled size="small" className={classNames('actionBarWhite')} onClick={this.handleSignIn}>
-                    <FontAwesomeIcon icon={faSignInAlt} />
-                </IconButton> */}
-            </Toolbar> 
-            <div className={"freckleForm"}>
-					{posting && <div className={classes.overlay}>
-						<CircularProgress size={96} className={classes.buttonProgress} />
-						</div>
-                    }
-                    <TextField
-                        error={this.state.tokenError ? true : null}
-                        label="Token"
-                        id="token"
-                        value={this.state.token}
-                        onChange={this.handleChange('token')}
-                        className={classes.textField}
-                        helperText="Your Personal Access Token for Noko"
-                        margin="normal"
-                        type={'password'}
-                        autoComplete={"off"}
-                    />
-                    {(this.state.token && this.state.token !== '' && this.state.projectList.length <= 0) &&
-                        <Button name="PIDButton" variant="contained" size="small" className={classNames(classes.button,classes.logBtn)} onClick={this.getProjectIDs}>
-                            <i className={classNames(classes.leftIcon, classes.iconSmall,"fas fa-arrow-circle-up")}></i>
-                            Get Project IDs
+                <Toolbar className={"actionBar"} disableGutters={true}>
+                    {(this.state.page==='create' && entryRows && entryRows.length > 1) &&
+                        <Zoom in={true}>
+                        <Button 
+                            variant="outlined"
+                            disabled={posting} size="small" 
+                            className={classNames('actionBarWhite',posting&&'colorDisabled')} 
+                            onClick={this.handleClickAll}
+                            startIcon={<FontAwesomeIcon icon={faArrowCircleUp} />}
+                        >
+			    	    	<span>LOG ALL</span>
                         </Button>
+                        </Zoom>
                     }
-            	    {entryRows}
-            	    {entryRowCount < 5 &&
-            	        <div className="addBtnContainer">
-            	        <IconButton  size="small" className={classNames('rowBtn')} onClick={this.handleAddRow}>
-            	            <FontAwesomeIcon icon={faPlusCircle} />
-            	        </IconButton>
-            	        </div>
-            	    }
+                </Toolbar>
+                <div className={"freckleForm"}>
+                    {(this.state.token && this.state.projectList.length>0) &&
+                        <React.Fragment>
+                        <div className={classes.btnGrpFix}></div>
+                        <div className={classes.btnGroup}>
+                        <Zoom in={true}>
+                        <ButtonGroup color="secondary" size="small" aria-label="small outlined button group">
+                            <Button
+                                disabled={this.state.page === 'create'}
+                                variant={this.state.page === 'create' ? null : 'contained'}
+                                onClick={()=>this.handlePageChange('create')}
+                            >
+                                Create Entries
+                            </Button>
+                            <Button 
+                                disabled={this.state.page === 'view'}
+                                variant={this.state.page === 'view' ? null : 'contained'}
+                                onClick={()=>this.handlePageChange('view')}
+                            >
+                                View Entries
+                            </Button>
+                        </ButtonGroup>
+                        </Zoom>
+                        </div>
+                        </React.Fragment>
+                    }
+                    {this.state.page==='view'
+                    ?   <ViewEntries token={this.state.token} />  
+                    : <React.Fragment>
+			    		{posting && <div className={classes.overlay}>
+			    			<CircularProgress size={96} className={classes.buttonProgress} />
+			    			</div>
+                        }
+                        {(this.state.projectList.length<=0) &&
+                        <TextField
+                            error={this.state.tokenError ? true : null}
+                            label="Token"
+                            id="token"
+                            value={this.state.token}
+                            onChange={this.handleChange('token')}
+                            className={classes.textField}
+                            helperText="Your Personal Access Token for Noko"
+                            margin="normal"
+                            type={'password'}
+                            autoComplete={"off"}
+                        />
+                      }
+                        {(this.state.token && this.state.token !== '' && this.state.projectList.length <= 0) &&
+                            <Button name="PIDButton" variant="contained" size="small" className={classNames(classes.button,classes.logBtn)} onClick={this.getProjectIDs}>
+                                <i className={classNames(classes.leftIcon, classes.iconSmall,"fas fa-arrow-circle-up")}></i>
+                                Get Project IDs
+                            </Button>
+                        }
+                	    {entryRows}
+                	    {entryRowCount < 5 &&
+                	        <div className="addBtnContainer">
+                	        <IconButton  size="small" className={classNames('rowBtn')} onClick={this.handleAddRow}>
+                	            <FontAwesomeIcon icon={faPlusCircle} />
+                	        </IconButton>
+                	        </div>
+                        }
+                        </React.Fragment>
+                    }
             	</div>
             </React.Fragment>
         );

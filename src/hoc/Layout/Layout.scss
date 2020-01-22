@@ -14,10 +14,11 @@ $drawerWidth: 240px;
 }
 .Container__AppFrame {
   position: relative;
-  display: flex;
-  width: 100%;
-  height: 100%;
-  flex-direction: column;
+  height: 100vh
+  // display: flex;
+  // width: 100%;
+  // height: 100%;
+  // flex-direction: column;
 }
 .Container__AppBar {
   flex-shrink: 0;
@@ -115,8 +116,12 @@ top: 28px;
   width: 100%;
   flex-grow: 1;
   background-color: #dcf2ab;
-  // padding: 24px;
-  // height: calc(100% - 112px);
-  // margin-top: 112px;
-  overflow-y: scroll;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+@media (max-width: 599px) {
+  .Container__Content {
+    overflow-y: scroll;
+  }
 }

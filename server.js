@@ -55,13 +55,61 @@ app.post('/api/getList', (req,res, next) => {
 
 	})
 	.catch( err => {
-        console.log('ERROR###############\n\n\n',err);
+        console.log('\n\n\n GET PROJECT LIST ERROR ###############\n\n\n',err.response.data);
         next(err);
         return;
 	});
 
 });
 
+/*///////////////////////////////////////////////////////////
+
+	Get Current User Entries from Noko	
+
+*////////////////////////////////////////////////////////////
+app.post('/api/fetchEntries', function (req, res, next) {
+    let postUrl = req.context.baseURL+'/current_user/entries';
+    let payload = JSON.parse(req.body.payload);
+    
+    let config = {
+        headers: {
+            'User-Agent': req.context.userAgent,
+            'X-NokoToken':req.body.token
+        }
+    }
+    
+    config.params = payload;
+
+    axios.get(postUrl,config)
+        .then( result => {
+	    	var listResultParsed = result.data;
+        
+	    	var entryArr = [];
+	    	var tempObj = {};
+			console.log(listResultParsed);
+            listResultParsed.forEach(function(obj){
+	    	  tempObj.id = obj.id;
+	    	  tempObj.date = obj.date;
+	    	  tempObj.minutes = obj.minutes;
+	    	  tempObj.tags = obj.tags.map((t)=>t.formatted_name);
+	    	  tempObj.projectId = obj.project.id;
+	    	  tempObj.projectName = obj.project.name;
+	    	  tempObj.projectColor = obj.project.color;
+	    	  entryArr.push({...tempObj});
+            });
+
+			console.log('\n\n\n\n\n\n              ENTRY LIST SUCCESS                     \n\n\n\n\n\n');
+			
+	    	return res.send(entryArr);
+
+	    })
+	    .catch( err => {
+            console.log('\n\n\n ENTRY LIST FETCH ERROR ###############\n\n\n',err.response.data);
+            next(err);
+            // return res.send(err);
+            return;
+	    });
+});
 
 /*///////////////////////////////////////////////////////////
 
@@ -101,7 +149,7 @@ app.post('/api/post', function (req, res, next) {
 						},
 						function(err){ 
 							console.log('\n\n\n\n\n\n               ERR INNER ERR                     \n\n\n\n\n\n');
-							console.log("err", err); 
+							console.log('\n\n\n ERROR INNER SPECIFICS ###############\n\n',err.response.data);
 							resInner(err); 
 						}
 						);
@@ -133,7 +181,8 @@ app.post('/api/post', function (req, res, next) {
         })
         .catch(err => {
             console.log('\n\n\n\n\n\n                   ERROR SINGLE ENTRY                     \n\n\n\n\n\n');
-            console.log(err);
+			console.log(err);
+			console.log('\n\n\n ENTRY ERROR SINGLE ENTRY SPECIFICS ###############\n\n',err.response.data);
             res.send(err.response);
         });
     }

@@ -1,0 +1,37 @@
+.btnGrpFix {
+    height:1px;
+}
+.btnGroup {
+    margin:16px;
+    display: flex;
+    justify-content: center;
+}
+.calendar {
+    display:flex;
+    justify-content: center;
+}
+.card {
+    max-width: 345px;
+}
+.cardHeader {
+    background-color:#0A2756;
+    color:white;
+}
+.rowCard {
+    display:flex;
+    min-height: 56px;
+    margin-bottom:6px;
+}
+.colorDiv {
+    width:20px;
+    min-width: 20px;
+}
+.rowCardText {
+    padding:8px;
+}
+.emptyRow {
+    width: 225px;
+    height:56px;
+    text-align: center;
+    line-height: 56px;
+}

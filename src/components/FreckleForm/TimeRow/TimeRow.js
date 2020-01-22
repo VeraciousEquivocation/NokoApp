@@ -121,8 +121,10 @@ class TimeRow extends Component {
             let updateStateObj = {};
         if(this.nullCheck(minutes) || minutes.match(/[^0-9]/g))
             updateStateObj.minutesError = true;
+            if(project_id !== 250931){ // Time Off does not require a Description Tag
         if(this.nullCheck(project_id.toString()) || project_id.toString().match(/[^0-9]/g))
             updateStateObj.project_idError = true;
+          }
         if(this.nullCheck(description) || !description.match(/^#/g))
             updateStateObj.descriptionError = true;
 
@@ -208,16 +210,16 @@ class TimeRow extends Component {
       				  	  <MenuItem value="" disabled>
 							  Project ID
       				  	  </MenuItem>
-							{/* {
+							{
 								this.props.projectList.length > 0
 								?	this.props.projectList.map(obj => <MenuItem key={obj.id} value={obj.id}>{obj.name}</MenuItem>)
 								: null
 
-							} */}
-							<MenuItem key={123} value={123}>{'Some Project'}</MenuItem>
+							}
+							{/* <MenuItem key={123} value={123}>{'Some Project'}</MenuItem>
 							<MenuItem key={1234} value={777}>{'Another One'}</MenuItem>
 							<MenuItem key={1235} value={1818}>{'And a Third'}</MenuItem>
-							<MenuItem key={1236} value={1819}>{'Potato Chips'}</MenuItem>
+							<MenuItem key={1236} value={1819}>{'Potato Chips'}</MenuItem> */}
       				  	</Select>
 						<FormHelperText className={this.state.project_idError ? classes.errColor : null}>{loadingProjects ? <div><CircularProgress size={24} className={classes.buttonProgress} />Project ID</div> : "Project ID"}</FormHelperText>
       				</FormControl>
@@ -240,8 +242,16 @@ class TimeRow extends Component {
                         loading={this.state.loading}
                     />
                     <div className={classes.wrapper}>
-                    <Button name="entryButton" disabled={((startDate && !loading) || this.props.posting) ? false : true} variant="contained" size="small" className={classNames(classes.button,classes.logBtn)} onClick={this.handleUpdateTime}>
-                        <i className={classNames(classes.leftIcon, classes.iconSmall,"fas fa-arrow-circle-up")}></i>
+                    <Button 
+                    color="secondary"
+                        name="entryButton" 
+                        disabled={((startDate && !loading) || this.props.posting) ? false : true} 
+                        variant="contained" 
+                        size="small" 
+                        className={classNames(classes.button,classes.logBtn,{[classes.logBtnActive]:((startDate && !loading) || !this.props.posting)})} 
+                        onClick={this.handleUpdateTime}
+                        >
+                            <i className={classNames(classes.leftIcon, classes.iconSmall,"fas fa-arrow-circle-up")}></i>
                         Log It
                     </Button>
                     {loading && <CircularProgress size={24} className={classes.buttonProgress} />}

@@ -58,7 +58,7 @@ export const inlineStyles = theme => ({
     },
     dateInput: {
         cursor:'pointer',
-        transition:"background-color 0.4s"
+        transition:"background-color 0.4s",
     },
     outerDiv: {  
         marginTop: 'auto',
