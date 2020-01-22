@@ -27,5 +27,4 @@ npm run start
 ```
 This will run from local host 3000 by default, and a proxy for the local server listening on port 3010 has been setup
 
-As stated, you will need your v2 API token, which you should be able to get from your Noko Account.
-This updates only entries for the user of the account the token is from.
+> Note: As stated, you will need your v2 API token, which you should be able to get from your Noko Account. This updates only entries for the user of the account the token is from.
