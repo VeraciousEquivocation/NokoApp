@@ -6,27 +6,38 @@ import Button from '@material-ui/core/Button';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
 import Zoom from '@material-ui/core/Zoom';
 import Card from '@material-ui/core/Card';
-import CardActionArea from '@material-ui/core/CardActionArea';
-import CardActions from '@material-ui/core/CardActions';
+// import CardActionArea from '@material-ui/core/CardActionArea';
+// import CardActions from '@material-ui/core/CardActions';
 import CardHeader from '@material-ui/core/CardHeader';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import Skeleton from '@material-ui/lab/Skeleton';
+import Snackbar from '@material-ui/core/Snackbar';
+import MuiAlert from '@material-ui/lab/Alert';
+import IconButton from '@material-ui/core/IconButton';
+import DeleteIcon from '@material-ui/icons/Delete';
+
+function Alert(props) {
+    return <MuiAlert elevation={6} {...props} />;
+}
 
 const initialValues = {
     loading: false,
     errorFetching: false,
-    entries:[]
+    errorMessage: '',
+    entries:[],
+    openErrAlert: false
 };
 
 function ViewEntries(props) {
     const [display, handleDisplayChange] = useState('today');
-    const [stateValues, updateStateValues, entries] = useState(initialValues);
+    const [stateValues, updateStateValues] = useState(initialValues);
+    const [ignored, forceUpdate] = React.useReducer(x => x + 1, 0);
 
     React.useEffect( ()=>{
         //GET THE CURRENT DISPLAY ENTRIES
-        updateStateValues(oldVals => { return{...oldVals,loading:!oldVals.loading,entries:[]} });
+        updateStateValues(oldVals => { return{...oldVals,loading:true,entries:[]} });
         var data = {};
         
         switch (display) {
@@ -70,7 +81,7 @@ function ViewEntries(props) {
             .then( result => {
                 // SET ENTRY ROWS
 
-                updateStateValues(oldVals => { return{...oldVals,loading:!oldVals.loading,entries:result.data} });
+                updateStateValues(oldVals => { return{...oldVals,loading:false,entries:result.data} });
 
                 // tempObj.id = obj.id;
 	    	    // tempObj.date = obj.date;
@@ -82,9 +93,88 @@ function ViewEntries(props) {
             })
             .catch(error => {
                 console.log(error)
-                updateStateValues(oldVals => { return{...oldVals,loading:!oldVals.loading,errorFetching:!oldVals.errorFetching} });
+                updateStateValues(oldVals => { return{...oldVals,loading:false,errorFetching:!oldVals.errorFetching, errorMessage:'ERROR: Could Not Delete Entry',openErrAlert:true} });
         });
-    },[display,props.token,updateStateValues]);
+    },[display,props.token,updateStateValues,ignored]);
+
+    const handleClose = (event, reason) => {
+        if (reason === 'clickaway') {
+          return;
+        }
+        updateStateValues(oldVals => { return{...oldVals,errorMessage:'',openErrAlert:false} });
+    };
+
+    const handleDelete = React.useCallback((id)=>{
+        if(!id || id==='') return; // for now we just return
+        
+        updateStateValues(oldVals => { return{...oldVals,loading:true} });
+        
+        var options = {};
+        options.payload = JSON.stringify({id});
+        options.token = props.token;
+        
+        axios.post('/api/delete', options)
+            .then( result => {
+                // force fetch to refresh values
+                setTimeout(()=>{
+                    forceUpdate();
+                },600);
+            })
+            .catch(error => {
+                console.log(error)
+
+                updateStateValues(oldVals => { return{...oldVals,loading:false, errorMessage:'ERROR: Could Not Delete Entry',openErrAlert:true} });
+        });
+    },[props.token]);
+
+    const buildCard = React.useCallback((entry) => {
+        return(
+            <React.Fragment>
+                <Grid container spacing={1}>
+                <Grid item xs={1} md={2} >
+                    <div className={scss.colorDiv} style={{backgroundColor:entry.projectColor}}>
+                    </div>
+                </Grid>
+                <Grid item xs={8} md={8}>
+                    <div className={scss.rowCardText}>
+                        <div>
+                            <Typography variant="body2" color="textSecondary" component="p">
+                                {entry.projectName}
+                            </Typography>
+                        </div>
+                        <div>
+                            <Typography variant="body2" color="textSecondary" component="p">
+                                {entry.minutes+' Minutes'}
+                            </Typography>
+                        </div>
+                        {entry.tags.length > 0 && <div>
+                            <Typography variant="body2" color="textSecondary" component="p">
+                                {entry.tags.map((tag,indx)=>{
+                                    if(entry.tags.length > 0 && indx !== (entry.tags.length - 1)) {
+                                        return(
+                                            <span key={indx}>{tag+' '}</span>
+                                        );
+                                    } else {
+                                        return(
+                                            <span key={indx}>{tag}</span>
+                                        );
+                                    }
+                                })}
+                            </Typography>
+                        </div>}
+                    </div>
+                </Grid>
+                <Grid item xs={2} >
+                    <div className={{}}>
+                        <IconButton aria-label="delete" size="small" onClick={()=>handleDelete(entry.id)}>
+                          <DeleteIcon fontSize="small" />
+                        </IconButton>
+                    </div>
+                </Grid>
+                </Grid>
+            </React.Fragment>
+        );
+    },[handleDelete]);
 
     let calendar = null;
 
@@ -121,23 +211,10 @@ function ViewEntries(props) {
                     return Moment(entry.date).isSame(i.format('YYYY-MM-DD'));
                 });
                 if(currentDayEntries.length>0) {
-                    currentDaysRows = currentDayEntries.map((entry) => {
+                    currentDaysRows = currentDayEntries.map((entry,indx) => {
                         return(
-                            <Card className={scss.rowCard}>
-                                <div className={scss.colorDiv} style={{backgroundColor:entry.projectColor}}>
-                                </div>
-                                <div className={scss.rowCardText}>
-                                    <div>
-                                    <Typography variant="body2" color="textSecondary" component="p">
-                                        {entry.projectName}
-                                    </Typography>
-                                    </div>
-                                    <div>
-                                    <Typography variant="body2" color="textSecondary" component="p">
-                                        {entry.tags}
-                                    </Typography>
-                                    </div>
-                                </div>
+                            <Card key={indx} className={scss.rowCard}>
+                                {buildCard(entry)}
                             </Card>
                         );
                     });
@@ -153,7 +230,7 @@ function ViewEntries(props) {
             }
             
             weekArray.push((
-                <Grid item xs={12} sm={3} >
+                <Grid item xs={12} sm={4} md={3} >
                     <Card raised className={scss.card}>
                         <CardHeader className={scss.cardHeader}
                             title={i.format('dddd')}
@@ -182,23 +259,10 @@ function ViewEntries(props) {
                     {/* First filter only today, then map rows  */}
                     {stateValues.entries.filter((entry)=>{
                         return Moment(entry.date).isSame(Moment().subtract(1,'days').format('YYYY-MM-DD'));
-                    }).map((entry) => {
+                    }).map((entry,indx) => {
                             return(
-                                <Card className={scss.rowCard}>
-                                    <div className={scss.colorDiv} style={{backgroundColor:entry.projectColor}}>
-                                    </div>
-                                    <div className={scss.rowCardText}>
-                                        <div>
-                                        <Typography variant="body2" color="textSecondary" component="p">
-                                            {entry.projectName}
-                                        </Typography>
-                                        </div>
-                                        <div>
-                                        <Typography variant="body2" color="textSecondary" component="p">
-                                            {entry.tags}
-                                        </Typography>
-                                        </div>
-                                    </div>
+                                <Card key={indx} className={scss.rowCard}>
+                                    {buildCard(entry)}
                                 </Card>
                             );
                     })}
@@ -226,24 +290,10 @@ function ViewEntries(props) {
                     {/* First filter only today, then map rows  */}
                     {stateValues.entries.filter((entry)=>{
                         return Moment(entry.date).isSame(Moment().add(1,'days').format('YYYY-MM-DD'));
-                    }).map((entry) => {
+                    }).map((entry,indx) => {
                             return(
-                                <Card className={scss.rowCard}>
-                                    <div className={scss.colorDiv} style={{backgroundColor:entry.projectColor}}>
-
-                                    </div>
-                                    <div className={scss.rowCardText}>
-                                        <div>
-                                        <Typography variant="body2" color="textSecondary" component="p">
-                                            {entry.projectName}
-                                        </Typography>
-                                        </div>
-                                        <div>
-                                        <Typography variant="body2" color="textSecondary" component="p">
-                                            {entry.tags}
-                                        </Typography>
-                                        </div>
-                                    </div>
+                                <Card key={indx} className={scss.rowCard}>
+                                    {buildCard(entry)}
                                 </Card>
                             );
                     })}
@@ -281,24 +331,10 @@ function ViewEntries(props) {
                     {/* First filter only today, then map rows  */}
                     {stateValues.entries.filter((entry)=>{
                         return Moment(entry.date).isSame(Moment().format('YYYY-MM-DD'));
-                    }).map((entry) => {
+                    }).map((entry,indx) => {
                             return(
-                                <Card className={scss.rowCard}>
-                                    <div className={scss.colorDiv} style={{backgroundColor:entry.projectColor}}>
-
-                                    </div>
-                                    <div className={scss.rowCardText}>
-                                        <div>
-                                        <Typography variant="body2" color="textSecondary" component="p">
-                                            {entry.projectName}
-                                        </Typography>
-                                        </div>
-                                        <div>
-                                        <Typography variant="body2" color="textSecondary" component="p">
-                                            {entry.tags}
-                                        </Typography>
-                                        </div>
-                                    </div>
+                                <Card key={indx} className={scss.rowCard}>
+                                    {buildCard(entry)}
                                 </Card>
                             );
                     })}
@@ -320,6 +356,11 @@ function ViewEntries(props) {
   return (
     <Fragment>
         <React.Fragment>
+            <Snackbar anchorOrigin={{ vertical:'top', horizontal:'center' }} open={stateValues.openErrAlert} autoHideDuration={6000} onClose={handleClose}>
+              <Alert onClose={handleClose} severity="error">
+                {stateValues.errorMessage}
+              </Alert>
+            </Snackbar>
             <div className={scss.btnGrpFix}></div>
             <div className={scss.btnGroup}>
             <Zoom in={true}>

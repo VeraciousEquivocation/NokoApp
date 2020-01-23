@@ -86,7 +86,6 @@ app.post('/api/fetchEntries', function (req, res, next) {
         
 	    	var entryArr = [];
 	    	var tempObj = {};
-			console.log(listResultParsed);
             listResultParsed.forEach(function(obj){
 	    	  tempObj.id = obj.id;
 	    	  tempObj.date = obj.date;
@@ -183,10 +182,44 @@ app.post('/api/post', function (req, res, next) {
             console.log('\n\n\n\n\n\n                   ERROR SINGLE ENTRY                     \n\n\n\n\n\n');
 			console.log(err);
 			console.log('\n\n\n ENTRY ERROR SINGLE ENTRY SPECIFICS ###############\n\n',err.response.data);
-            res.send(err.response);
+            next(err.response);
+            return;
         });
     }
     
+});
+
+/*///////////////////////////////////////////////////////////
+
+	Delete a single, or multiple, Entrie(s) in Noko
+
+*////////////////////////////////////////////////////////////
+
+app.post('/api/delete', function (req, res, next) {
+	let request = JSON.parse(req.body.payload);
+	let postUrl = req.context.baseURL+'/entries/'+request.id;
+	console.log('\n\n\nWE"VE HIT THE DELETE METHOD\n\n\n');
+	// Can add multiple deletion, would be similar loop to creating entries
+	// let idArray = req.body.idArray ? [...req.body.idArray] : [];
+	
+	let config = {
+		headers: {
+			'User-Agent': req.context.userAgent,
+			'X-NokoToken':req.body.token
+		},
+	}
+	axios.delete(postUrl,config)
+	.then( result => {
+		console.log('DELETED!');
+		return res.send('success');
+	})
+	.catch(err => {
+		console.log('\n\n\n\n\n\n                   ERROR DELETE                     \n\n\n\n\n\n');
+		console.log(err);
+		console.log('\n\n\n ERROR DELETE SPECIFICS ###############\n\n',err.response.data);
+		next(err.response);
+		return;
+	});
 });
 
 /////////// FOR DEV ENVIRONMENT //////////////////////////////////
