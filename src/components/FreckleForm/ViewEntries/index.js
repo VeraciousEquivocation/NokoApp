@@ -39,13 +39,15 @@ function ViewEntries(props) {
         //GET THE CURRENT DISPLAY ENTRIES
         updateStateValues(oldVals => { return{...oldVals,loading:true,entries:[]} });
         var data = {};
-        
+        var options = {display};
+
         switch (display) {
             case 'lastweek':
                     data = {
                         'from': Moment().subtract(7,'days').startOf('isoWeek').format('YYYY-MM-DD'),
                         'to':Moment().subtract(7,'days').endOf('isoWeek').format('YYYY-MM-DD')
                     };
+                    
                 break;
             case 'yesterday':
                     data = {
@@ -73,7 +75,6 @@ function ViewEntries(props) {
                 break;
         }
 
-        var options = {};
         options.payload = JSON.stringify(data);
         options.token = props.token;
         
