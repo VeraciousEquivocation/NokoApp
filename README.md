@@ -4,7 +4,7 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 A WebApp requiring the NokoTime v2 API Token.
 The NokoTime website restricts you to entering one entry at a time for one day.
-This WebApp will allow a user to update multiple entries at one time.
+This WebApp will allow a user to create multiple entries at one time.
 
 A view has also been added to allow for seeing current entries for, today, tomorrow, yesterday, last week, and current week. Entries can also be deleted through this view.
 
@@ -28,3 +28,5 @@ npm run start
 This will run from local host 3000 by default, and a proxy for the local server listening on port 3010 has been setup
 
 > Note: As stated, you will need your v2 API token, which you should be able to get from your Noko Account. This updates only entries for the user of the account the token is from.
+
+server.js has minimal setup for session caching of entry data, the default setup with express-session
