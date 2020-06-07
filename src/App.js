@@ -1,29 +1,25 @@
-import React, { Component } from 'react';
+import React from 'react';
 import './App.css';
 
-import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
-// import './App.scss';
+import { ThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import Layout from './hoc/Layout/Layout';
-import FreckleForm from './components/FreckleForm/FreckleForm';
+import FreckleForm from './components/FreckleForm/';
 
-class App extends Component {
-  componentDidMount () {
-  }
-  comnponentWillUpdate () {
-  }
-  render () {
+function App({themeObj}) {
   
-  const theme = createMuiTheme(window.muiTheme);
-    return (
-      <MuiThemeProvider theme={theme}>
+  const themeBuilder = themeObj ? themeObj : window.muiTheme;
+  const theme = createMuiTheme(themeBuilder);
+
+  return (
+    <ThemeProvider theme={theme}>
       <div style={{height:'100%'}} >
-		  <Layout>
+      <Layout>
           <FreckleForm />
-		  </Layout>
+      </Layout>
       </div>
-      </MuiThemeProvider>
-    );
-  }
+    </ThemeProvider>
+
+  )
 }
 
 export default App;
