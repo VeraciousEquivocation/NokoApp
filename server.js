@@ -1,10 +1,16 @@
 const axios = require('axios');
 // const path = require('path');
 const express = require('express');
+const session = require('express-session');
 const app = express();
 // const builder = require('xmlbuilder');
 
+app.use(session({secret: 'ssshhhhh',saveUninitialized: true,resave: true}));
 app.use(express.json());
+
+// Set the global session, NOT recommended
+var sess;
+
 ////////////// FOR PROD ENVIRONMENT ////////////////////////
 // app.use(express.static(path.join(__dirname, 'build')));
 
@@ -20,6 +26,15 @@ app.use(express.json());
 
 *////////////////////////////////////////////////////////////
 app.use('/api/*',(req, res, next) => {
+    sess = req.session;
+    if(!sess.entries)sess.entries={};
+    if(!sess.update)sess.update={
+        lastweek:false,
+        yesterday:false,
+        tomorrow:false,
+        thisweek:false,
+        today:false
+    };
     req.context = {
         userAgent: '[YOUR APP NAME FOR NOKO]',
         baseURL: 'https://api.nokotime.com/v2',
@@ -29,7 +44,6 @@ app.use('/api/*',(req, res, next) => {
   
 
 app.post('/api/getList', (req,res, next) => {
-
     let axiosSetup = {
        'method' : 'get',
        'contentType': 'application/json',
@@ -50,6 +64,8 @@ app.post('/api/getList', (req,res, next) => {
 		  tempObj.name = obj.name;
 		  projArr.push({...tempObj});
 		});
+        
+        sess.hasListArray = projArr;
 
 		return res.send(projArr);
 
@@ -68,6 +84,17 @@ app.post('/api/getList', (req,res, next) => {
 
 *////////////////////////////////////////////////////////////
 app.post('/api/fetchEntries', function (req, res, next) {
+
+    sess = req.session;
+    if(sess.entries[req.body.display] && !sess.update[req.body.display]) {
+        return  res.send(sess.entries[req.body.display]);
+    }
+
+    // if(sess.update[req.body.display])
+    //     console.log(`\n\n\nUPDATING ${req.body.display}\n\n\n`);
+    // else
+    //     console.log(`\n\n\nNO DATA FOR ${req.body.display}\n\n\n`);
+
     let postUrl = req.context.baseURL+'/current_user/entries';
     let payload = JSON.parse(req.body.payload);
     
@@ -97,8 +124,11 @@ app.post('/api/fetchEntries', function (req, res, next) {
 	    	  entryArr.push({...tempObj});
             });
 
-			console.log('\n\n\n\n\n\n              ENTRY LIST SUCCESS                     \n\n\n\n\n\n');
-			
+            console.log('\n\n\n\n\n\n              ENTRY LIST SUCCESS                     \n\n\n\n\n\n');
+            
+            sess.entries[req.body.display] = entryArr;
+            if(sess.update[req.body.display]) sess.update[req.body.display] = false;
+
 	    	return res.send(entryArr);
 
 	    })
@@ -127,6 +157,9 @@ app.post('/api/post', function (req, res, next) {
             'X-NokoToken':req.body.token
         },
     }
+    let updateUpdateObj = false;
+    let avoidRefError = () => updateUpdateObj;
+    let toggleUpdateObj = () => updateUpdateObj = true;
 
     if(dateArray.length > 0) {
         let postArray = [];
@@ -144,7 +177,10 @@ app.post('/api/post', function (req, res, next) {
 							// resolved and not rejected.
 							// Resolve the outer promise here.
 							console.log('\n\n\n\n\n\n               INNER SUCCESS                     \n\n\n\n\n\n');
-							resInner(data);
+                            if(!avoidRefError()) {
+                                toggleUpdateObj();
+                            }
+                            resInner(data);
 						},
 						function(err){ 
 							console.log('\n\n\n\n\n\n               ERR INNER ERR                     \n\n\n\n\n\n');
@@ -164,18 +200,42 @@ app.post('/api/post', function (req, res, next) {
 				statusArray.push(response.status);
 			});
 			console.log('#######\n\n### END OF all axios calls ###\n\n#########');
+            sess.update={
+                lastweek:true,
+                yesterday:true,
+                tomorrow:true,
+                thisweek:true,
+                today:true
+            };
 			res.send(statusArray);
 			return;
           })
           .catch(err => {
             console.log('\n\n\n\n\n\n                   OUTER ERROR                     \n\n\n\n\n\n');
-			console.log(err);
+            console.log(err);
+            if(updateUpdateObj){
+                // some may have been successful, so force fetching of new data
+                sess.update={
+                    lastweek:true,
+                    yesterday:true,
+                    tomorrow:true,
+                    thisweek:true,
+                    today:true
+                };
+            }
 			next(err);
             return;
         });
     } else {
         axios.post(postUrl,payload,config)
         .then( result => {
+            sess.update={
+                lastweek:true,
+                yesterday:true,
+                tomorrow:true,
+                thisweek:true,
+                today:true
+            };
             return res.send('success');
         })
         .catch(err => {
@@ -197,8 +257,8 @@ app.post('/api/post', function (req, res, next) {
 
 app.post('/api/delete', function (req, res, next) {
 	let request = JSON.parse(req.body.payload);
-	let postUrl = req.context.baseURL+'/entries/'+request.id;
-	console.log('\n\n\nWE"VE HIT THE DELETE METHOD\n\n\n');
+    let postUrl = req.context.baseURL+'/entries/'+request.id;
+    
 	// Can add multiple deletion, would be similar loop to creating entries
 	// let idArray = req.body.idArray ? [...req.body.idArray] : [];
 	
@@ -211,6 +271,13 @@ app.post('/api/delete', function (req, res, next) {
 	axios.delete(postUrl,config)
 	.then( result => {
 		console.log('DELETED!');
+        sess.update={
+            lastweek:true,
+            yesterday:true,
+            tomorrow:true,
+            thisweek:true,
+            today:true
+        };
 		return res.send('success');
 	})
 	.catch(err => {

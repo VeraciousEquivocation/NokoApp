@@ -1,4 +1,5 @@
 import React, { Fragment, useState } from "react";
+import PropTypes from 'prop-types';
 import axios from 'axios';
 import Moment from 'moment';
 import scss from './ViewEntries.module.scss';
@@ -6,8 +7,6 @@ import Button from '@material-ui/core/Button';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
 import Zoom from '@material-ui/core/Zoom';
 import Card from '@material-ui/core/Card';
-// import CardActionArea from '@material-ui/core/CardActionArea';
-// import CardActions from '@material-ui/core/CardActions';
 import CardHeader from '@material-ui/core/CardHeader';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
@@ -39,13 +38,15 @@ function ViewEntries(props) {
         //GET THE CURRENT DISPLAY ENTRIES
         updateStateValues(oldVals => { return{...oldVals,loading:true,entries:[]} });
         var data = {};
-        
+        var options = {display};
+
         switch (display) {
             case 'lastweek':
                     data = {
                         'from': Moment().subtract(7,'days').startOf('isoWeek').format('YYYY-MM-DD'),
                         'to':Moment().subtract(7,'days').endOf('isoWeek').format('YYYY-MM-DD')
                     };
+                    
                 break;
             case 'yesterday':
                     data = {
@@ -73,7 +74,6 @@ function ViewEntries(props) {
                 break;
         }
 
-        var options = {};
         options.payload = JSON.stringify(data);
         options.token = props.token;
         
@@ -411,5 +411,9 @@ function ViewEntries(props) {
     </Fragment>
   );
 }
+
+ViewEntries.propTypes = {
+    token: PropTypes.string.isRequired,
+};
 
 export default ViewEntries;
