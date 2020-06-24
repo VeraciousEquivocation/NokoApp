@@ -1,8 +1,7 @@
 import React, { Fragment, useState } from "react";
-import PropTypes from 'prop-types';
-import axios from 'axios';
 import Moment from 'moment';
 import scss from './ViewEntries.module.scss';
+import {getLoggedTime, deleteEntry} from '../../../API/api'; 
 import Button from '@material-ui/core/Button';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
 import Zoom from '@material-ui/core/Zoom';
@@ -38,15 +37,13 @@ function ViewEntries(props) {
         //GET THE CURRENT DISPLAY ENTRIES
         updateStateValues(oldVals => { return{...oldVals,loading:true,entries:[]} });
         var data = {};
-        var options = {display};
-
+        
         switch (display) {
             case 'lastweek':
                     data = {
                         'from': Moment().subtract(7,'days').startOf('isoWeek').format('YYYY-MM-DD'),
                         'to':Moment().subtract(7,'days').endOf('isoWeek').format('YYYY-MM-DD')
                     };
-                    
                 break;
             case 'yesterday':
                     data = {
@@ -74,27 +71,29 @@ function ViewEntries(props) {
                 break;
         }
 
+        var options = {};
         options.payload = JSON.stringify(data);
         options.token = props.token;
-        
-        axios.post('/api/fetchEntries', options)
-            .then( result => {
+
+        getLoggedTime(options)
+        .then(resp => {
+            const {error} = resp; // only care if there's an error or not
+            if(error) {
+                console.log('Error: ',error)
+                updateStateValues(oldVals => { return{...oldVals,loading:false,errorFetching:!oldVals.errorFetching, errorMessage:'ERROR: Could Not Get Entries',openErrAlert:true} });
+            } else {
                 // SET ENTRY ROWS
-
-                updateStateValues(oldVals => { return{...oldVals,loading:false,entries:result.data} });
-
+                updateStateValues(oldVals => { return{...oldVals,loading:false,entries:resp.result} });
+                
                 // tempObj.id = obj.id;
-	    	    // tempObj.date = obj.date;
-	    	    // tempObj.minutes = obj.minutes;
-	    	    // tempObj.tags = obj.tags;
-	    	    // tempObj.projectId = obj.projectId;
-	    	    // tempObj.projectName = obj.projectName;
-	    	    // tempObj.projectColor = obj.projectColor;
-            })
-            .catch(error => {
-                console.log(error)
-                updateStateValues(oldVals => { return{...oldVals,loading:false,errorFetching:!oldVals.errorFetching, errorMessage:'ERROR: Could Not Delete Entry',openErrAlert:true} });
-        });
+                // tempObj.date = obj.date;
+                // tempObj.minutes = obj.minutes;
+                // tempObj.tags = obj.tags;
+                // tempObj.projectId = obj.projectId;
+                // tempObj.projectName = obj.projectName;
+                // tempObj.projectColor = obj.projectColor;
+            }
+        })
     },[display,props.token,updateStateValues,ignored]);
 
     const handleClose = (event, reason) => {
@@ -113,18 +112,19 @@ function ViewEntries(props) {
         options.payload = JSON.stringify({id});
         options.token = props.token;
         
-        axios.post('/api/delete', options)
-            .then( result => {
+        deleteEntry(options)
+        .then(resp => {
+            const {error} = resp; // only care if there's an error or not
+            if(error) {
+                console.log(error)
+                updateStateValues(oldVals => { return{...oldVals,loading:false, errorMessage:'ERROR: Could Not Delete Entry',openErrAlert:true} });
+            } else {
                 // force fetch to refresh values
                 setTimeout(()=>{
                     forceUpdate();
                 },600);
-            })
-            .catch(error => {
-                console.log(error)
-
-                updateStateValues(oldVals => { return{...oldVals,loading:false, errorMessage:'ERROR: Could Not Delete Entry',openErrAlert:true} });
-        });
+            }
+        })
     },[props.token]);
 
     const buildCard = React.useCallback((entry) => {
@@ -220,7 +220,7 @@ function ViewEntries(props) {
                     });
                 } else {
                     currentDaysRows.push((
-                        <Card className={scss.rowCard}>
+                        <Card key={0} className={scss.rowCard}>
                             <div className={scss.emptyRow}>
                                 No Entries
                             </div>
@@ -243,7 +243,6 @@ function ViewEntries(props) {
                 </Grid>
             ));
         }
-        
         return weekArray;
     },[stateValues.entries,display,stateValues.loading]);
 
@@ -411,9 +410,5 @@ function ViewEntries(props) {
     </Fragment>
   );
 }
-
-ViewEntries.propTypes = {
-    token: PropTypes.string.isRequired,
-};
 
 export default ViewEntries;

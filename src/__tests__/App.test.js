@@ -5,6 +5,7 @@ import {render as rtlRender,waitFor} from '@testing-library/react'
 import user from '@testing-library/user-event'
 import {getProjectList as mockGetProjectList} from '../API/api'
 import {postLogEntries as mockPostLogEntries} from '../API/api'
+import {getLoggedTime as mockGetLoggedTime} from '../API/api'
 import App from '../App';
 import DateUtils from '@date-io/date-fns'
 
@@ -180,7 +181,7 @@ test('Submit Entry, Success and Failure', async () => {
     error: 'THIS IS A FAKE ERROR',
   })
 
-  const { findByText, getByTitle, getByLabelText, getByText, getAllByRole, getByRole, debug} = renderAppAfterListFetch()
+  const { findByText, getByTitle, getByLabelText, getByText, getAllByRole, getByRole} = renderAppAfterListFetch()
 
   // since we're updating state inside the form, we wait for the below change to appear
   await waitFor(() => getByText(/create entries/i))
@@ -276,5 +277,73 @@ test('Submit Entry, Success and Failure', async () => {
   await waitFor(()=>user.click(logItBtn))
 
   expect(getByTitle(/error/i)).toBeInTheDocument()
+
+}, 20000);
+
+test('View Entries Page', async () => {
+  mockGetProjectList.mockResolvedValueOnce({result:{data:[
+    {
+      id: 123,
+      name: 'proj1',
+    },
+    {
+      id: 234,
+      name: 'proj2',
+    },
+    {
+      id: 345,
+      name: 'proj3',
+    },
+  ]}})
+  const fakeTimeEntry = {
+    date: dateFns.format(new Date(), "yyyy-MM-dd"),
+    id: 1234,
+    minutes: 480,
+    projectColor: "#13a480",
+    projectId: 4567,
+    projectName: "Test Name",
+    tags: ["#One", "#Two"],
+  }
+  mockGetLoggedTime.mockResolvedValueOnce({
+    success:true,
+    result:[
+      fakeTimeEntry
+  ]}) 
+  // test error response
+  mockGetLoggedTime.mockResolvedValueOnce({
+    error: 'COULD NOT GET ENTRIES',
+  })
+
+  const {getByText} = renderAppAfterListFetch()
+
+  // since we're updating state inside the form, we wait for the below change to appear
+  await waitFor(() => getByText(/view entries/i))
+  user.click(getByText(/view entries/i))
+  // wait for the first fake time entry to appear
+  await waitFor(() => getByText(/Test Name/i))
+
+  expect(mockGetLoggedTime).toHaveBeenCalledTimes(1)
+  const payloadObj = 
+  JSON.stringify({
+    "from":fakeTimeEntry.date,
+    "to":fakeTimeEntry.date,
+  })
+  expect(mockGetLoggedTime).toHaveBeenCalledWith({
+    payload:payloadObj,
+    "token": fakeToken
+  })
+
+  
+  user.click(getByText(/last week/i))
+  await waitFor(() => getByText(/Monday/i))
+  expect(getByText(/tuesday/i)).toBeInTheDocument()
+  expect(getByText(/wednesday/i)).toBeInTheDocument()
+  expect(getByText(/thursday/i)).toBeInTheDocument()
+  expect(getByText(/friday/i)).toBeInTheDocument()
+  expect(getByText(/saturday/i)).toBeInTheDocument()
+  expect(getByText(/sunday/i)).toBeInTheDocument()
+
+  expect(mockGetLoggedTime).toHaveBeenCalledTimes(2)
+  expect(getByText(/ERROR: COULD NOT GET ENTRIES/i)).toBeInTheDocument()
 
 }, 20000);

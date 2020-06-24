@@ -31,4 +31,32 @@ async function postLogEntries(options) {
     return data;
 }
 
-export {getProjectList,postLogEntries}
+async function getLoggedTime(options) {
+    const data = await  axios.post('/api/fetchEntries', options)
+    .then( result => {
+        return {
+            success: true,
+            result: result.data,
+        }
+    })
+    .catch(error => {
+        console.log('API ERROR',error)
+        return {error: error}
+    });
+    return data;
+}
+
+async function deleteEntry(options) {
+    const data = await  axios.post('/api/delete', options)
+        .then( result => {
+            return {
+                success: true,
+            }
+        })
+        .catch(error => {
+            console.log('API ERROR',error)
+            return {error: error}
+        });
+    return data;
+}
+export {getProjectList,postLogEntries,getLoggedTime,deleteEntry}
