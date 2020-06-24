@@ -32,4 +32,4 @@ This will run from local host 3000 by default, and a proxy for the local server 
 server.js has minimal setup for session caching of entry data, the default setup with express-session
 
 ### Integration Test in place:
-A test can be run, with npm test, that will check the initial form.
+A test can be run, with npm test, that will check functionality for entry submission, and entry viewing
