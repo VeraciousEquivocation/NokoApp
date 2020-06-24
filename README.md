@@ -30,3 +30,6 @@ This will run from local host 3000 by default, and a proxy for the local server 
 > Note: As stated, you will need your v2 API token, which you should be able to get from your Noko Account. This updates only entries for the user of the account the token is from.
 
 server.js has minimal setup for session caching of entry data, the default setup with express-session
+
+### Integration Test in place:
+A test can be run, with npm test, that will check the initial form.
