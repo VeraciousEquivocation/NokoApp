@@ -137,7 +137,7 @@ test('add max rows for entry', async () => {
   // since we're updating state inside the form, we wait for the below change to appear
   await waitFor(() => getByText(/create entries/i))
 
-  let plusBtn = findByRole(/PlusBtn/i)
+  let plusBtn = await waitFor(()=>findByRole(/PlusBtn/i))
 
   user.click(await plusBtn)
   let allLogItBtns = await waitFor(()=>findAllByText(/log it/i))
@@ -171,7 +171,6 @@ test('Submit Entry, Success and Failure', async () => {
       name: 'proj3',
     },
   ]}})
-  mockGetProjectList.mockResolvedValueOnce({error: 'A Fake error occurred'})
   // test success response
   mockPostLogEntries.mockResolvedValueOnce({
     success: true,
