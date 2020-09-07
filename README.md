@@ -33,3 +33,8 @@ server.js has minimal setup for session caching of entry data, the default setup
 
 ### Integration Test in place:
 A test can be run, with npm test, that will check functionality for entry submission, and entry viewing
+
+
+![noko_1](https://user-images.githubusercontent.com/8482594/92403987-9298c180-f100-11ea-84a5-7d155be4e242.gif)
+
+![noko_2](https://user-images.githubusercontent.com/8482594/92404040-aba17280-f100-11ea-9cf2-adf1a89d0111.gif)
